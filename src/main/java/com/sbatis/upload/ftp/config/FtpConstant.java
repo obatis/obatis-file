@@ -3,27 +3,27 @@ package com.sbatis.upload.ftp.config;
 public class FtpConstant {
 
 	/**
-	 * 顶级目录，工作空间
+	 * 文件上传顶级目录
 	 */
-	public static String TOP_PATH = null; // ftp目录下文件夹 (一级目录)
+	public static String UPLOAD_TOP_PATH = null;
 
 	/**
-	 * 表示ftp客户端超时时间
+	 * 超时时间
 	 */
 	public static int TIME_OUT = 10000;
 
 	/**
-	 * 重试次数，默认值0
+	 * 文件上传客户端重试次数，默认值0
 	 */
-	public static final int RETRY_DEFAULT = 0;
+	public static final int UPLOAD_RETRY_TIMES_DEFAULT = 0;
 
 	/**
 	 * 重试中止边界值，表示重试3次
 	 */
-	public static final int RETRY_BREAK_FLAG = 3;
+	public static final int RETRY_TIMES_FLAG = 3;
 
 	/**
-	 * 声明配置类，主要用于缓存
+	 * 缓存config文件于内存，方便取值
 	 */
 	public static FtpConfig DEFAULT_CONFIG = null;
 

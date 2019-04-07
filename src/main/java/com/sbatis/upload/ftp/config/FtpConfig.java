@@ -17,7 +17,7 @@ public class FtpConfig extends GenericObjectPoolConfig<FTPClient> {
 
 	private int connectTimeOut = FtpConstant.TIME_OUT;// 默认ftp连接超时时间 毫秒
 	private String controlEncoding = DefaultNormalConstant.CHARSET_UTF8; // 设置编码
-	private int retryTimes = FtpConstant.RETRY_DEFAULT; // 重试次数
+	private int retryTimes = FtpConstant.UPLOAD_RETRY_TIMES_DEFAULT; // 重试次数
 	private int bufferSize = 1024 * 1024;// 缓冲区大小
 	private int fileType = 2;// 1:传输数据格式 2:binary二进制数据
 	private int dataTimeout = 30000;

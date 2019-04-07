@@ -41,7 +41,7 @@ public class FTPPool {
 	 * @throws Exception
 	 */
 	public FTPClient borrowObject() throws Exception {
-		return borrowObject(FtpConstant.RETRY_DEFAULT);
+		return borrowObject(FtpConstant.UPLOAD_RETRY_TIMES_DEFAULT);
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class FTPPool {
 	 * @throws Exception
 	 */
 	private FTPClient borrowObject(int retry) throws Exception {
-		if(retry < FtpConstant.RETRY_BREAK_FLAG) {
+		if(retry < FtpConstant.RETRY_TIMES_FLAG) {
 			FTPClient ftp = pool.borrowObject();
 			if(ftp == null) {
 				retry++;

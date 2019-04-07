@@ -149,7 +149,7 @@ public class FtpUploadFactory implements Serializable {
 			throw new Exception("ftp info initConfig error : pathName is empty!");
 		}
 
-		FtpConstant.TOP_PATH = pathName;
+		FtpConstant.UPLOAD_TOP_PATH = pathName;
 
 		FtpConfig ftpConfig = new FtpConfig();
 		ftpConfig.setFtpHost(ftpHost);
@@ -309,7 +309,7 @@ public class FtpUploadFactory implements Serializable {
 	 * @return
 	 */
 	public static String upload(InputStream inputStream, String fileSuffix, String typeName) {
-		return upload(inputStream, fileSuffix, typeName, FtpConstant.RETRY_DEFAULT);
+		return upload(inputStream, fileSuffix, typeName, FtpConstant.UPLOAD_RETRY_TIMES_DEFAULT);
 	}
 
 	/**
@@ -327,10 +327,10 @@ public class FtpUploadFactory implements Serializable {
 		String curYearMonth = DateCommonConvert.formatCurYearMonth();
 		String topPath = null;
 		if (CommonValidate.isNull(typeName)) {
-			topPath = FtpConstant.TOP_PATH;
+			topPath = FtpConstant.UPLOAD_TOP_PATH;
 		} else {
 			// 默认目录+自定义文件夹
-			topPath = FtpConstant.TOP_PATH + "/" + typeName;
+			topPath = FtpConstant.UPLOAD_TOP_PATH + "/" + typeName;
 		}
 
 		UploadPathTempData uploadPathTempData = uploadPathTempDataMap.get(topPath);// 获取Map中的对象
@@ -371,7 +371,7 @@ public class FtpUploadFactory implements Serializable {
 			// 三级目录矩阵
 			topPath += "/" + pathY.charAt(uploadPathTempData.getPathThirdY()) + pathX.charAt(uploadPathTempData.getPathThirdX());
 
-			if(retryTimes == FtpConstant.RETRY_BREAK_FLAG - 1) {
+			if(retryTimes == FtpConstant.RETRY_TIMES_FLAG - 1) {
 				// 说明是最后一次重试，更改连接模式
 				if(DEFAULT_FTP_PASSIVE_MODE) {
 					// 表示原先为被动模式，改为主动模式
@@ -394,7 +394,7 @@ public class FtpUploadFactory implements Serializable {
 			}
 			
 		} catch (Exception e) {
-			if(retryTimes == FtpConstant.RETRY_BREAK_FLAG - 1) {
+			if(retryTimes == FtpConstant.RETRY_TIMES_FLAG - 1) {
 				e.printStackTrace();
 			}
 		} finally {
@@ -407,7 +407,7 @@ public class FtpUploadFactory implements Serializable {
 			}
 
 			retryTimes++;
-			if ((uploadSuccess || retryTimes >= FtpConstant.RETRY_BREAK_FLAG) && inputStream != null) {
+			if ((uploadSuccess || retryTimes >= FtpConstant.RETRY_TIMES_FLAG) && inputStream != null) {
 				try {
 					inputStream.close();
 					inputStream = null;
@@ -420,13 +420,13 @@ public class FtpUploadFactory implements Serializable {
 		/**
 		 * 采用递归的形式进行上传重试
 		 */
-		if (!uploadSuccess && retryTimes < FtpConstant.RETRY_BREAK_FLAG) {
+		if (!uploadSuccess && retryTimes < FtpConstant.RETRY_TIMES_FLAG) {
 			filePath = upload(inputStream, fileSuffix, typeName, retryTimes);
 		}
 		/**
 		 * 最后一次重试时，切换ftp连接的连接模式进行重试，重新初始化一次连接池
 		 */
-		if(uploadSuccess && retryTimes == FtpConstant.RETRY_BREAK_FLAG) {
+		if(uploadSuccess && retryTimes == FtpConstant.RETRY_TIMES_FLAG) {
 			FtpConstant.DEFAULT_CONFIG.setPassiveMode(DEFAULT_FTP_PASSIVE_MODE);
 			try {
 				initPool(FtpConstant.DEFAULT_CONFIG);
