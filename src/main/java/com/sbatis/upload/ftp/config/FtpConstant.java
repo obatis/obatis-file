@@ -33,7 +33,7 @@ public class FtpConstant {
 	/**
 	 * 连接池最大数
 	 */
-	public static final int POOL_MAX_TOTAL = 10;
+	public static final int POOL_MAX_TOTAL = 5;
 	/**
 	 * 连接池最小空闲
 	 */
