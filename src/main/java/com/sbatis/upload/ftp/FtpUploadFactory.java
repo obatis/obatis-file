@@ -26,10 +26,9 @@ public class FtpUploadFactory implements Serializable {
 
 	private static Map<String, UploadPathTempData> uploadPathTempDataMap = new HashMap<>();
 
-	/***
-	 * 一级目录 二级目录 两位(0-9数字开头，字母结尾) 三级目录(字母开头，数字结尾)
+	/**
+	 * 矩阵文件夹命名规则，字母在前，数字在后
 	 */
-
 	private static final String pathY = "ABCDEFGHJK";
 	private static final String pathX = "0123456789";
 	private static final int pathCompareSize = 9;
