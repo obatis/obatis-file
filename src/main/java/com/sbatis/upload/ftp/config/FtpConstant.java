@@ -43,9 +43,9 @@ public class FtpConstant {
 	 */
 	public static final int POOL_MAX_IDLE = 2;
 	/**
-	 * 最大等待时间
+	 * 最大等待时间，-1表示一直堵塞，单位为毫秒
 	 */
-	public static final int POOL_MAX_WAIT = 5000;
+	public static final int POOL_MAX_WAIT = 30000;
 	/**
 	 * 池对象耗尽之后是否阻塞,maxWait<0时一直等待
 	 */
@@ -73,7 +73,7 @@ public class FtpConstant {
 	/**
 	 *  连接空闲的最小时间，达到此值后空闲链接将会被移除，且保留“minIdle”个空闲连接数。默认为-1表示不移除，以下设置表示空闲1分钟即移除空闲连接
 	 */
-	public static final int POOL_SOFT_MIN_EVICTABLE_IDLE_TIMEMILLIS = 60000;
+	public static final int POOL_MIN_EVICTABLE_IDLE_TIMEMILLIS = 60000;
 	/**
 	 * 后进先出
 	 */

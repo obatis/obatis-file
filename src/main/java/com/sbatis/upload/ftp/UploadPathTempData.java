@@ -1,6 +1,6 @@
 package com.sbatis.upload.ftp;
 
-public class PathRecordData {
+public class UploadPathTempData {
 
 	/**
 	 * 二级目录Y坐标
@@ -18,13 +18,11 @@ public class PathRecordData {
 	 * 三级目录X坐标
 	 */
 	private int pathThirdX = 0;
-
-//	private  int rowIndex3 = 0;//
+	/**
+	 * 上传年月
+	 */
+	private String uploadYearMonth;
 	
-	private  String fileDate = null;//
-	
-
-
 	public int getPathSecondX() {
 		return pathSecondX;
 	}
@@ -57,20 +55,11 @@ public class PathRecordData {
 		this.pathThirdX = pathThirdX;
 	}
 
-	//	public int getRowIndex3() {
-//		return rowIndex3;
-//	}
-//	public void setRowIndex3(int rowIndex3) {
-//		this.rowIndex3 = rowIndex3;
-//	}
-	public String getFileDate() {
-		return fileDate;
-	}
-	public void setFileDate(String fileDate) {
-		this.fileDate = fileDate;
+	public String getUploadYearMonth() {
+		return uploadYearMonth;
 	}
 
-
-
-
+	public void setUploadYearMonth(String uploadYearMonth) {
+		this.uploadYearMonth = uploadYearMonth;
+	}
 }

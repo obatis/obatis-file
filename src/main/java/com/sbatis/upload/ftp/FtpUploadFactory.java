@@ -5,6 +5,7 @@ import com.sbatis.upload.ftp.config.FtpConfig;
 import com.sbatis.upload.ftp.config.FtpConstant;
 import com.sbatis.upload.ftp.pool.FTPFactory;
 import com.sbatis.upload.ftp.pool.FTPPool;
+import com.sbatis.validate.CommonValidate;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;
@@ -23,16 +24,15 @@ public class FtpUploadFactory implements Serializable {
 	 */
 	private static boolean DEFAULT_FTP_PASSIVE_MODE = true;
 
-	private static Map<String, PathRecordData> mapPathRecordData = new HashMap<String, PathRecordData>();
+	private static Map<String, UploadPathTempData> uploadPathTempDataMap = new HashMap<>();
 
 	/***
 	 * 一级目录 二级目录 两位(0-9数字开头，字母结尾) 三级目录(字母开头，数字结尾)
 	 */
 
-	private static String pathY = "ABCDEFGHJK";
-	private static String pathX = "0123456789";
-
-	private static int pathCompareSize = 9;
+	private static final String pathY = "ABCDEFGHJK";
+	private static final String pathX = "0123456789";
+	private static final int pathCompareSize = 9;
 
 	private static FTPPool ftpPool;
 
@@ -42,18 +42,17 @@ public class FtpUploadFactory implements Serializable {
 	/**
 	 * 获取存储目录
 	 * @author HuangLongPu
-	 * @param pathRecordData
+	 * @param uploadPathTempData
 	 * @return
 	 */
-	private static PathRecordData getPath(PathRecordData pathRecordData) {
+	private static void getUploadPath(UploadPathTempData uploadPathTempData) {
 
-		int pathSecondX = pathRecordData.getPathSecondX();
-		int pathSecondY = pathRecordData.getPathSecondY();
-		int pathThirdX = pathRecordData.getPathThirdX();
-		int pathThirdY = pathRecordData.getPathThirdY();
+		int pathSecondX = uploadPathTempData.getPathSecondX();
+		int pathSecondY = uploadPathTempData.getPathSecondY();
+		int pathThirdX = uploadPathTempData.getPathThirdX();
+		int pathThirdY = uploadPathTempData.getPathThirdY();
 		// 通过递归方式，得到矩阵目录
-		comparePathSize(pathRecordData, pathSecondX, pathSecondY, pathThirdX, pathThirdY);
-		return pathRecordData;
+		comparePathSize(uploadPathTempData, pathSecondX, pathSecondY, pathThirdX, pathThirdY);
 	}
 
 	/**
@@ -64,7 +63,7 @@ public class FtpUploadFactory implements Serializable {
 	 * @param pathThirdY
 	 * @return
 	 */
-	private static void comparePathSize(PathRecordData pathRecordData, int pathSecondX, int pathSecondY, int pathThirdX, int pathThirdY) {
+	private static void comparePathSize(UploadPathTempData uploadPathTempData, int pathSecondX, int pathSecondY, int pathThirdX, int pathThirdY) {
 		boolean flag = true;
 		if (pathThirdX > pathCompareSize) {
 			pathThirdX = 0;
@@ -96,85 +95,114 @@ public class FtpUploadFactory implements Serializable {
 			pathThirdX++;
 		}
 		if(pathThirdX > pathCompareSize) {
-			comparePathSize(pathRecordData, pathSecondX, pathSecondY, pathThirdX, pathThirdY);
+			comparePathSize(uploadPathTempData, pathSecondX, pathSecondY, pathThirdX, pathThirdY);
 		} else {
-			pathRecordData.setPathSecondX(pathSecondX);
-			pathRecordData.setPathSecondY(pathSecondY);
-			pathRecordData.setPathThirdX(pathThirdX);
-			pathRecordData.setPathThirdY(pathThirdY);
+			uploadPathTempData.setPathSecondX(pathSecondX);
+			uploadPathTempData.setPathSecondY(pathSecondY);
+			uploadPathTempData.setPathThirdX(pathThirdX);
+			uploadPathTempData.setPathThirdY(pathThirdY);
 		}
 	}
 
 	/**
 	 * 初始化ftp连接 表示连接超时为默认10000毫秒 表示连接模式为被动模式
-	 * @param projectName
+	 * @param pathName
 	 * @param ftpHost
 	 * @param ftpPort
 	 * @param ftpUsername
 	 * @param ftpPassword
 	 * @throws Exception
 	 */
-	public static void initConfig(String projectName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword) throws Exception {
-		initConfig(projectName, ftpHost, ftpPort, ftpUsername, ftpPassword, FtpConstant.TIME_OUT);
+	public static void initConfig(String pathName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword) throws Exception {
+		initConfig(pathName, ftpHost, ftpPort, ftpUsername, ftpPassword, FtpConstant.TIME_OUT);
 	}
 
 	/**
 	 * 初始化ftp连接 自定义超时时间 表示连接模式为被动模式
-	 * @param projectName
-	 * @param host
-	 * @param port
-	 * @param username
-	 * @param password
-	 * @param clientTimeout
+	 * @param pathName
+	 * @param ftpHost
+	 * @param ftpPort
+	 * @param ftpUsername
+	 * @param ftpPassword
+	 * @param timeout
 	 * @throws Exception
 	 */
-	public static void initConfig(String projectName, String host, int port, String username, String password, int clientTimeout) throws Exception {
-		initConfig(projectName, host, port, username, password, clientTimeout, true);
+	public static void initConfig(String pathName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword, int timeout) throws Exception {
+		initConfig(pathName, ftpHost, ftpPort, ftpUsername, ftpPassword, timeout, true);
 	}
 
 	/**
 	 * 初始化ftp连接 自定义超时时间 自定义选择连接模式，被动为true，主动为false
-	 * @param projectName
-	 * @param host
-	 * @param port
-	 * @param username
-	 * @param password
-	 * @param clientTimeout
-	 * @param passiveMode
+	 * @param pathName
+	 * @param ftpHost
+	 * @param ftpPort
+	 * @param ftpUsername
+	 * @param ftpPassword
+	 * @param timeout
+	 * @param ftpPassiveMode
 	 * @throws Exception
 	 */
-	public static void initConfig(String projectName, String host, int port, String username, String password, int clientTimeout, boolean passiveMode)
+	public static void initConfig(String pathName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword, int timeout, boolean ftpPassiveMode)
 			throws Exception {
 
-		if (projectName == null || "".equals(projectName.trim())) {
-			throw new Exception("initConfig error:project is empty");
+		if (CommonValidate.isNull(pathName)) {
+			throw new Exception("ftp info initConfig error : pathName is empty!");
 		}
 
-		FtpConstant.TOP_PATH = projectName;
+		FtpConstant.TOP_PATH = pathName;
 
 		FtpConfig ftpConfig = new FtpConfig();
-		ftpConfig.setFtpHost(host);
-		ftpConfig.setFtpPort(port);
-		ftpConfig.setFtpUsername(username);
-		ftpConfig.setFtpPassword(password);
+		ftpConfig.setFtpHost(ftpHost);
+		ftpConfig.setFtpPort(ftpPort);
+		ftpConfig.setFtpUsername(ftpUsername);
+		ftpConfig.setFtpPassword(ftpPassword);
 
-		ftpConfig.setMaxTotal(15); // 池中的最大连接数
-		ftpConfig.setMinIdle(2); // 最少的空闲连接数
-		ftpConfig.setMaxIdle(5); // 最多的空闲连接数
-		ftpConfig.setMaxWaitMillis(-1); // 当连接池资源耗尽时,调用者最大阻塞的时间,超时时抛出异常 单位:毫秒数
-		// ，-1位一直堵塞
-		ftpConfig.setLifo(true); // 连接池存放池化对象方式,true放在空闲队列最前面,false放在空闲队列最后
-		ftpConfig.setMinEvictableIdleTimeMillis(1000L * 60L * 30L); // 连接空闲的最小时间,达到此值后空闲连接可能会被移除,默认即为30分钟
-		ftpConfig.setBlockWhenExhausted(true); // 连接耗尽时是否阻塞,默认为true
-		ftpConfig.setConnectTimeOut(clientTimeout);
-		ftpConfig.setPassiveMode(passiveMode);
-		// 将默认值写入到常量，方便文件上传时重试判断
-		DEFAULT_FTP_PASSIVE_MODE = passiveMode;
+		/**
+		 * 连接池最大数
+		 */
+		ftpConfig.setMaxTotal(FtpConstant.POOL_MAX_TOTAL);
+		/**
+		 * 连接池最小的空闲数
+		 */
+		ftpConfig.setMinIdle(FtpConstant.POOL_MIN_IDLE);
+		/**
+		 * 连接池最大的空闲数
+		 */
+		ftpConfig.setMaxIdle(FtpConstant.POOL_MAX_IDLE);
+		/**
+		 * 当连接池最大阻塞时间,超时则抛出异常
+		 */
+		ftpConfig.setMaxWaitMillis(FtpConstant.POOL_MAX_WAIT);
+		/**
+		 * 遵循队列先进先出原则
+		 */
+		ftpConfig.setLifo(FtpConstant.POOL_LIFO);
+		/**
+		 * 连接空闲的最小时间,达到此值后空闲连接可能会被移除
+		 */
+		ftpConfig.setMinEvictableIdleTimeMillis(FtpConstant.POOL_MIN_EVICTABLE_IDLE_TIMEMILLIS);
+		/**
+		 * 连接耗尽时是否阻塞
+		 */
+		ftpConfig.setBlockWhenExhausted(FtpConstant.POOL_BLOCK_WHENEXHAUSTED);
+		/**
+		 *  超时时间
+		 */
+		ftpConfig.setConnectTimeOut(timeout);
+		/**
+		 * 连接模式
+		 */
+		ftpConfig.setPassiveMode(ftpPassiveMode);
+		/**
+		 * 将默认值写入到常量，方便文件上传时重试判断
+		 */
+		DEFAULT_FTP_PASSIVE_MODE = ftpPassiveMode;
 		initPool(ftpConfig);
 	}
 
 	/**
 	 * 初始化配置ftp连接池
+	 * @author HuangLongPu
 	 * @param ftpConfig
 	 * @throws Exception
 	 */
@@ -188,8 +216,7 @@ public class FtpUploadFactory implements Serializable {
 		FTPFactory ftpFactory = new FTPFactory();
 		ftpFactory.setFtpConfig(ftpConfig);
 		ftpPool = new FTPPool(ftpFactory);
-		
-		// 临时保存config类
+		// 将config类信息保存在内存中
 		FtpConstant.DEFAULT_CONFIG = ftpConfig;
 	}
 
@@ -218,12 +245,12 @@ public class FtpUploadFactory implements Serializable {
 	 * 传入File 进行文件上传，同时规定文件类型
 	 * @author HuangLongPu
 	 * @param file
-	 * @param fileType
+	 * @param typeName
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static String upload(File file, String fileType) throws FileNotFoundException {
-		return upload(new FileInputStream(file), file.getName().substring(file.getName().lastIndexOf(".")), fileType);
+	public static String upload(File file, String typeName) throws FileNotFoundException {
+		return upload(new FileInputStream(file), file.getName().substring(file.getName().lastIndexOf(".")), typeName);
 	}
 
 	/**
@@ -234,7 +261,7 @@ public class FtpUploadFactory implements Serializable {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static String upload(byte[] data, String fileName) throws FileNotFoundException {
+	public static String upload(byte[] data, String fileName) {
 		fileName = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 		return upload(inputStream, fileName, null);
@@ -245,102 +272,106 @@ public class FtpUploadFactory implements Serializable {
 	 * @author HuangLongPu
 	 * @param data
 	 * @param fileName
-	 * @param fileType
+	 * @param typeName
+	 * @author HuangLongPu
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static String upload(byte[] data, String fileName, String fileType) throws FileNotFoundException {
-		fileName = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
+	public static String upload(byte[] data, String fileName, String typeName) {
+		String fileSuffix = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-		return upload(inputStream, fileName, fileType);
+		return upload(inputStream, fileSuffix, typeName);
 	}
 
 	/**
 	 * 文件上传服务，以文件流的形式上传
 	 * @author HuangLongPu
-	 * @param is
+	 * @param inputStream
 	 * @param fileName
 	 * @return
 	 */
-	public static String upload(InputStream is, String fileName) {
-		if(fileName.contains(".")) {
-			fileName = fileName.substring(fileName.lastIndexOf("."));
-		}
-		return upload(is, fileName, null);
+	public static String upload(InputStream inputStream, String fileName) {
+		String fileSuffix = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
+//		if(fileName.contains(".")) {
+//			fileSuffix = fileName.substring(fileName.lastIndexOf("."));
+//		} else {
+//			fileSuffix = fileName;
+//		}
+		return upload(inputStream, fileSuffix, null);
 	}
 
 	/**
 	 * 文件上传
 	 * @author HuangLongPu
-	 * @param is
-	 * @param suffix
-	 * @param fileType
+	 * @param inputStream
+	 * @param fileSuffix
+	 * @param typeName
 	 * @return
 	 */
-	public static String upload(InputStream is, String suffix, String fileType) {
-		return upload(is, suffix, fileType, FtpConstant.RETRY_DEFAULT);
+	public static String upload(InputStream inputStream, String fileSuffix, String typeName) {
+		return upload(inputStream, fileSuffix, typeName, FtpConstant.RETRY_DEFAULT);
 	}
 
 	/**
 	 * 加入重试机制
 	 * @author HuangLongPu
-	 * @param is
-	 * @param suffix
-	 * @param fileType
-	 * @param retryCount
+	 * @param inputStream
+	 * @param fileSuffix
+	 * @param typeName
+	 * @param retryTimes
 	 * @return
 	 */
-	private static String upload(InputStream is, String suffix, String fileType, int retryCount) {
+	private static String upload(InputStream inputStream, String fileSuffix, String typeName, int retryTimes) {
 
 		// 获取"yyyyMM"格式的字符串
-		String fileDate = DateCommonConvert.formatCurYearMonth();
-		String parentPath = null;
-		if (fileType == null || fileType.trim().isEmpty()) {
-			parentPath = FtpConstant.TOP_PATH;
+		String curYearMonth = DateCommonConvert.formatCurYearMonth();
+		String topPath = null;
+		if (CommonValidate.isNull(typeName)) {
+			topPath = FtpConstant.TOP_PATH;
 		} else {
 			// 默认目录+自定义文件夹
-			parentPath = FtpConstant.TOP_PATH + "/" + fileType;
+			topPath = FtpConstant.TOP_PATH + "/" + typeName;
 		}
 
-		PathRecordData pathRecordData = mapPathRecordData.get(parentPath);// 获取Map中的对象
-		if (null == pathRecordData) {
-			pathRecordData = new PathRecordData();
+		UploadPathTempData uploadPathTempData = uploadPathTempDataMap.get(topPath);// 获取Map中的对象
+		if (uploadPathTempData == null) {
+			uploadPathTempData = new UploadPathTempData();
 		}
 
-		if(null != pathRecordData.getFileDate()){
-			if (!fileDate.equals(pathRecordData.getFileDate())) {// 获取日期比较
-				mapPathRecordData.clear();
-				pathRecordData = new PathRecordData();
-				pathRecordData.setFileDate(fileDate);
+		if(!CommonValidate.isNull(uploadPathTempData.getUploadYearMonth())){
+			if (!curYearMonth.equals(uploadPathTempData.getUploadYearMonth())) {
+				uploadPathTempDataMap.clear();
+				uploadPathTempData = new UploadPathTempData();
+				uploadPathTempData.setUploadYearMonth(curYearMonth);
 			}
 		}
 
-		int parentLevel = 0;
+		int topLevel = 0;
 		String filePath = null;
 		FTPClient ftpClient = null;
 
 		// 标记文件是否上传成功，true为上传成功，false表示失败
-		boolean uploadFlag = false;
+		boolean uploadSuccess = false;
 		try {
 			ftpClient = ftpPool.borrowObject();
 			if(ftpClient == null) {
 				return null;
 			}
 			
-			String fileSuffix = (suffix.indexOf(".") == -1 ? suffix : suffix.replace(".", "")).toLowerCase();
-			String fileName = getUploadFileName(fileSuffix);
-			// 判断是否指定了文件夹
-			pathRecordData = getPath(pathRecordData);
-			// 添加到map中
-			mapPathRecordData.put(parentPath, pathRecordData);
-			parentPath += "/" + fileDate;
+			fileSuffix = (fileSuffix.indexOf(".") == -1 ? fileSuffix : fileSuffix.replace(".", "")).toLowerCase();
+			String uploadFileName = getUploadFileName(fileSuffix);
+			// 获取文件上传目录
+			getUploadPath(uploadPathTempData);
+			// 添加到缓存，方便下次取值判断
+			uploadPathTempDataMap.put(topPath, uploadPathTempData);
+			topPath += "/" + curYearMonth;
 
 			// 二级目录矩阵
-			parentPath += "/" + pathY.charAt(pathRecordData.getPathSecondY()) + pathX.charAt(pathRecordData.getPathSecondX());
+			topPath += "/" + pathY.charAt(uploadPathTempData.getPathSecondY()) + pathX.charAt(uploadPathTempData.getPathSecondX());
 			// 三级目录矩阵
-			parentPath += "/" + pathY.charAt(pathRecordData.getPathThirdY()) + pathX.charAt(pathRecordData.getPathThirdX());
+			topPath += "/" + pathY.charAt(uploadPathTempData.getPathThirdY()) + pathX.charAt(uploadPathTempData.getPathThirdX());
 
-			if(retryCount == FtpConstant.RETRY_BREAK_FLAG - 1) {
+			if(retryTimes == FtpConstant.RETRY_BREAK_FLAG - 1) {
 				// 说明是最后一次重试，更改连接模式
 				if(DEFAULT_FTP_PASSIVE_MODE) {
 					// 表示原先为被动模式，改为主动模式
@@ -351,35 +382,35 @@ public class FtpUploadFactory implements Serializable {
 				}
 			}
 			
-			String[] pathArr = parentPath.split("/");
-			parentLevel = pathArr.length;
-			for (String path : pathArr) {
+			String[] pathArray = topPath.split("/");
+			topLevel = pathArray.length;
+			for (String path : pathArray) {
 				ftpClient.makeDirectory(path);
 				ftpClient.changeWorkingDirectory(path);
 			}
-			uploadFlag = ftpClient.storeFile(fileName, is);
-			if (uploadFlag) {
-				filePath = parentPath + "/" + fileName;
+			uploadSuccess = ftpClient.storeFile(uploadFileName, inputStream);
+			if (uploadSuccess) {
+				filePath = topPath + "/" + uploadFileName;
 			}
 			
 		} catch (Exception e) {
-			if(retryCount == FtpConstant.RETRY_BREAK_FLAG - 1) {
+			if(retryTimes == FtpConstant.RETRY_BREAK_FLAG - 1) {
 				e.printStackTrace();
 			}
 		} finally {
 			if(ftpClient != null) {
 				try {
-					ftpPool.returnObject(ftpClient, parentLevel);
+					ftpPool.returnObject(ftpClient, topLevel);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-			retryCount++;
-			if ((uploadFlag || retryCount >= FtpConstant.RETRY_BREAK_FLAG) && is != null) {
+			retryTimes++;
+			if ((uploadSuccess || retryTimes >= FtpConstant.RETRY_BREAK_FLAG) && inputStream != null) {
 				try {
-					is.close();
-					is = null;
+					inputStream.close();
+					inputStream = null;
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -389,13 +420,13 @@ public class FtpUploadFactory implements Serializable {
 		/**
 		 * 采用递归的形式进行上传重试
 		 */
-		if (!uploadFlag && retryCount < FtpConstant.RETRY_BREAK_FLAG) {
-			filePath = upload(is, suffix, fileType, retryCount);
+		if (!uploadSuccess && retryTimes < FtpConstant.RETRY_BREAK_FLAG) {
+			filePath = upload(inputStream, fileSuffix, typeName, retryTimes);
 		}
 		/**
 		 * 最后一次重试时，切换ftp连接的连接模式进行重试，重新初始化一次连接池
 		 */
-		if(uploadFlag && retryCount == FtpConstant.RETRY_BREAK_FLAG) {
+		if(uploadSuccess && retryTimes == FtpConstant.RETRY_BREAK_FLAG) {
 			FtpConstant.DEFAULT_CONFIG.setPassiveMode(DEFAULT_FTP_PASSIVE_MODE);
 			try {
 				initPool(FtpConstant.DEFAULT_CONFIG);
@@ -435,9 +466,10 @@ public class FtpUploadFactory implements Serializable {
 	/**
 	 * 获取文件名，防止ftp文件服务器文件名重复，需要传入文件后缀名进行拼接
 	 * @author HuangLongPu
+	 * @param fileSuffix
+	 * @return
 	 */
-	private static String getUploadFileName(String suffix) {
-		UUID randomUUID = UUID.randomUUID();
-		return DateCommonConvert.formatCurDateTimeMillis() + "_" + randomUUID.toString().replace("-", "") + "." + suffix;
+	private static String getUploadFileName(String fileSuffix) {
+		return DateCommonConvert.formatCurDateTimeMillis() + "_" + UUID.randomUUID().toString().replace("-", "01") + "." + fileSuffix;
 	}
 }
