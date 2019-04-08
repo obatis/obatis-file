@@ -1,5 +1,9 @@
 package com.sbatis.upload.ftp.config;
 
+/**
+ * ftp常量类
+ * @author HuangLongPu
+ */
 public class FtpConstant {
 
 	/**

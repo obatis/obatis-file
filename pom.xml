@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sbatis</groupId>
-            <artifactId>sbatis-util</artifactId>
+            <artifactId>sbatis-tools</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

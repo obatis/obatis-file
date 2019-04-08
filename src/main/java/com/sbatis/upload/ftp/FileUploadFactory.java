@@ -1,11 +1,9 @@
 package com.sbatis.upload.ftp;
 
 import com.sbatis.convert.date.DateCommonConvert;
-import com.sbatis.upload.ftp.config.FtpConfig;
 import com.sbatis.upload.ftp.config.FtpConstant;
-import com.sbatis.upload.ftp.pool.FTPFactory;
-import com.sbatis.upload.ftp.pool.FTPPool;
-import com.sbatis.validate.CommonValidate;
+import com.sbatis.upload.ftp.pool.FtpPool;
+import com.sbatis.validate.ValidateTool;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;
@@ -17,13 +15,8 @@ import java.util.UUID;
  * ftp模块文件上传组件服务
  * @author HuangLongPu
  */
-public class FtpUploadFactory implements Serializable {
+public class FileUploadFactory implements Serializable {
 	
-	/**
-	 * 默认设置ftp为被动模式
-	 */
-	private static boolean DEFAULT_FTP_PASSIVE_MODE = true;
-
 	private static Map<String, UploadPathTempData> uploadPathTempDataMap = new HashMap<>();
 
 	/**
@@ -33,9 +26,7 @@ public class FtpUploadFactory implements Serializable {
 	private static final String pathX = "0123456789";
 	private static final int pathCompareSize = 9;
 
-	private static FTPPool ftpPool;
-
-	private FtpUploadFactory() {
+	private FileUploadFactory() {
 	}
 
 	/**
@@ -101,122 +92,6 @@ public class FtpUploadFactory implements Serializable {
 			uploadPathTempData.setPathThirdX(pathThirdX);
 			uploadPathTempData.setPathThirdY(pathThirdY);
 		}
-	}
-
-	/**
-	 * 初始化ftp连接 表示连接超时为默认10000毫秒 表示连接模式为被动模式
-	 * @param pathName
-	 * @param ftpHost
-	 * @param ftpPort
-	 * @param ftpUsername
-	 * @param ftpPassword
-	 * @throws Exception
-	 */
-	public static void initConfig(String pathName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword) throws Exception {
-		initConfig(pathName, ftpHost, ftpPort, ftpUsername, ftpPassword, FtpConstant.TIME_OUT);
-	}
-
-	/**
-	 * 初始化ftp连接 自定义超时时间 表示连接模式为被动模式
-	 * @param pathName
-	 * @param ftpHost
-	 * @param ftpPort
-	 * @param ftpUsername
-	 * @param ftpPassword
-	 * @param timeout
-	 * @throws Exception
-	 */
-	public static void initConfig(String pathName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword, int timeout) throws Exception {
-		initConfig(pathName, ftpHost, ftpPort, ftpUsername, ftpPassword, timeout, true);
-	}
-
-	/**
-	 * 初始化ftp连接 自定义超时时间 自定义选择连接模式，被动为true，主动为false
-	 * @param pathName
-	 * @param ftpHost
-	 * @param ftpPort
-	 * @param ftpUsername
-	 * @param ftpPassword
-	 * @param timeout
-	 * @param ftpPassiveMode
-	 * @throws Exception
-	 */
-	public static void initConfig(String pathName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword, int timeout, boolean ftpPassiveMode)
-			throws Exception {
-
-		if (CommonValidate.isNull(pathName)) {
-			throw new Exception("ftp info initConfig error : pathName is empty!");
-		}
-
-		FtpConstant.UPLOAD_TOP_PATH = pathName;
-
-		FtpConfig ftpConfig = new FtpConfig();
-		ftpConfig.setFtpHost(ftpHost);
-		ftpConfig.setFtpPort(ftpPort);
-		ftpConfig.setFtpUsername(ftpUsername);
-		ftpConfig.setFtpPassword(ftpPassword);
-
-		/**
-		 * 连接池最大数
-		 */
-		ftpConfig.setMaxTotal(FtpConstant.POOL_MAX_TOTAL);
-		/**
-		 * 连接池最小的空闲数
-		 */
-		ftpConfig.setMinIdle(FtpConstant.POOL_MIN_IDLE);
-		/**
-		 * 连接池最大的空闲数
-		 */
-		ftpConfig.setMaxIdle(FtpConstant.POOL_MAX_IDLE);
-		/**
-		 * 当连接池最大阻塞时间,超时则抛出异常
-		 */
-		ftpConfig.setMaxWaitMillis(FtpConstant.POOL_MAX_WAIT);
-		/**
-		 * 遵循队列先进先出原则
-		 */
-		ftpConfig.setLifo(FtpConstant.POOL_LIFO);
-		/**
-		 * 连接空闲的最小时间,达到此值后空闲连接可能会被移除
-		 */
-		ftpConfig.setMinEvictableIdleTimeMillis(FtpConstant.POOL_MIN_EVICTABLE_IDLE_TIMEMILLIS);
-		/**
-		 * 连接耗尽时是否阻塞
-		 */
-		ftpConfig.setBlockWhenExhausted(FtpConstant.POOL_BLOCK_WHENEXHAUSTED);
-		/**
-		 *  超时时间
-		 */
-		ftpConfig.setConnectTimeOut(timeout);
-		/**
-		 * 连接模式
-		 */
-		ftpConfig.setPassiveMode(ftpPassiveMode);
-		/**
-		 * 将默认值写入到常量，方便文件上传时重试判断
-		 */
-		DEFAULT_FTP_PASSIVE_MODE = ftpPassiveMode;
-		initPool(ftpConfig);
-	}
-
-	/**
-	 * 初始化配置ftp连接池
-	 * @author HuangLongPu
-	 * @param ftpConfig
-	 * @throws Exception
-	 */
-	public synchronized static void initPool(FtpConfig ftpConfig) throws Exception {
-
-		if (ftpPool != null) {
-			ftpPool.closeObject();
-		}
-
-		// 初始化连接池
-		FTPFactory ftpFactory = new FTPFactory();
-		ftpFactory.setFtpConfig(ftpConfig);
-		ftpPool = new FTPPool(ftpFactory);
-		// 将config类信息保存在内存中
-		FtpConstant.DEFAULT_CONFIG = ftpConfig;
 	}
 
 	/**
@@ -320,7 +195,7 @@ public class FtpUploadFactory implements Serializable {
 		// 获取当前年月 "yyyyMM" 格式的字符串
 		String curYearMonth = DateCommonConvert.formatCurYearMonth();
 		String topPath = null;
-		if (CommonValidate.isNull(typeName)) {
+		if (ValidateTool.isEmpty(typeName)) {
 			topPath = FtpConstant.UPLOAD_TOP_PATH;
 		} else {
 			// 默认目录+自定义文件夹
@@ -332,7 +207,7 @@ public class FtpUploadFactory implements Serializable {
 			uploadPathTempData = new UploadPathTempData();
 		}
 
-		if(!CommonValidate.isNull(uploadPathTempData.getUploadYearMonth())){
+		if(!ValidateTool.isEmpty(uploadPathTempData.getUploadYearMonth())){
 			if (!curYearMonth.equals(uploadPathTempData.getUploadYearMonth())) {
 				uploadPathTempDataMap.clear();
 				uploadPathTempData = new UploadPathTempData();
@@ -347,7 +222,7 @@ public class FtpUploadFactory implements Serializable {
 		// 标记文件上传成功标识，布尔类型表示上传成功与否状态
 		boolean uploadSuccess = false;
 		try {
-			ftpClient = ftpPool.borrowObject();
+			ftpClient = FtpPool.borrowObject();
 			if(ftpClient == null) {
 				return null;
 			}
@@ -367,9 +242,9 @@ public class FtpUploadFactory implements Serializable {
 
 			if(retryTimes == FtpConstant.RETRY_TIMES_FLAG - 1) {
 				// 说明重试最后一次，为保证能上传成功，更改连接模式
-				if(DEFAULT_FTP_PASSIVE_MODE) {
+				if(FtpPool.DEFAULT_FTP_PASSIVE_MODE) {
 					// 表示原先为被动模式，改为主动模式
-					DEFAULT_FTP_PASSIVE_MODE = false;
+					FtpPool.DEFAULT_FTP_PASSIVE_MODE = false;
 					ftpClient.enterLocalActiveMode();
 				} else {
 					ftpClient.enterLocalPassiveMode();
@@ -394,7 +269,7 @@ public class FtpUploadFactory implements Serializable {
 		} finally {
 			if(ftpClient != null) {
 				try {
-					ftpPool.returnObject(ftpClient, topLevel);
+					FtpPool.returnObject(ftpClient, topLevel);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -421,9 +296,9 @@ public class FtpUploadFactory implements Serializable {
 		 * 最后一次重试时，切换ftp连接的连接模式进行重试，重新初始化一次连接池
 		 */
 		if(uploadSuccess && retryTimes == FtpConstant.RETRY_TIMES_FLAG) {
-			FtpConstant.DEFAULT_CONFIG.setPassiveMode(DEFAULT_FTP_PASSIVE_MODE);
+			FtpConstant.DEFAULT_CONFIG.setPassiveMode(FtpPool.DEFAULT_FTP_PASSIVE_MODE);
 			try {
-				initPool(FtpConstant.DEFAULT_CONFIG);
+				FtpPool.initPool(FtpConstant.DEFAULT_CONFIG);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -442,14 +317,14 @@ public class FtpUploadFactory implements Serializable {
 		boolean success = false;
 		FTPClient ftpClient = null;
 		try {
-			ftpClient = ftpPool.borrowObject();
+			ftpClient = FtpPool.borrowObject();
 			ftpClient.deleteFile(filePath);
 			success = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				ftpPool.returnObject(ftpClient, 0);
+				FtpPool.returnObject(ftpClient, 0);
 			} catch (Exception ioe) {
 				ioe.printStackTrace();
 			}
