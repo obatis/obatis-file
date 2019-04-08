@@ -291,11 +291,6 @@ public class FtpUploadFactory implements Serializable {
 	 */
 	public static String upload(InputStream inputStream, String fileName) {
 		String fileSuffix = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
-//		if(fileName.contains(".")) {
-//			fileSuffix = fileName.substring(fileName.lastIndexOf("."));
-//		} else {
-//			fileSuffix = fileName;
-//		}
 		return upload(inputStream, fileSuffix, null);
 	}
 
@@ -322,7 +317,7 @@ public class FtpUploadFactory implements Serializable {
 	 */
 	private static String upload(InputStream inputStream, String fileSuffix, String typeName, int retryTimes) {
 
-		// 获取"yyyyMM"格式的字符串
+		// 获取当前年月 "yyyyMM" 格式的字符串
 		String curYearMonth = DateCommonConvert.formatCurYearMonth();
 		String topPath = null;
 		if (CommonValidate.isNull(typeName)) {
@@ -349,7 +344,7 @@ public class FtpUploadFactory implements Serializable {
 		String filePath = null;
 		FTPClient ftpClient = null;
 
-		// 标记文件是否上传成功，true为上传成功，false表示失败
+		// 标记文件上传成功标识，布尔类型表示上传成功与否状态
 		boolean uploadSuccess = false;
 		try {
 			ftpClient = ftpPool.borrowObject();
@@ -359,19 +354,19 @@ public class FtpUploadFactory implements Serializable {
 			
 			fileSuffix = (fileSuffix.indexOf(".") == -1 ? fileSuffix : fileSuffix.replace(".", "")).toLowerCase();
 			String uploadFileName = getUploadFileName(fileSuffix);
-			// 获取文件上传目录
+			// 获取文件上传矩阵目录
 			getUploadPath(uploadPathTempData);
 			// 添加到缓存，方便下次取值判断
 			uploadPathTempDataMap.put(topPath, uploadPathTempData);
 			topPath += "/" + curYearMonth;
 
-			// 二级目录矩阵
+			// 二级矩阵目录
 			topPath += "/" + pathY.charAt(uploadPathTempData.getPathSecondY()) + pathX.charAt(uploadPathTempData.getPathSecondX());
-			// 三级目录矩阵
+			// 三级矩阵目录
 			topPath += "/" + pathY.charAt(uploadPathTempData.getPathThirdY()) + pathX.charAt(uploadPathTempData.getPathThirdX());
 
 			if(retryTimes == FtpConstant.RETRY_TIMES_FLAG - 1) {
-				// 说明是最后一次重试，更改连接模式
+				// 说明重试最后一次，为保证能上传成功，更改连接模式
 				if(DEFAULT_FTP_PASSIVE_MODE) {
 					// 表示原先为被动模式，改为主动模式
 					DEFAULT_FTP_PASSIVE_MODE = false;
