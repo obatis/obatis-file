@@ -29,7 +29,7 @@ public class FTPPool {
         poolConfig.setTestOnCreate(FtpConstant.POOL_TEST_ON_CREATE);
         poolConfig.setTestWhileIdle(FtpConstant.POOL_TEST_WHILEIDLE);
         poolConfig.setTimeBetweenEvictionRunsMillis(FtpConstant.POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS);
-        poolConfig.setSoftMinEvictableIdleTimeMillis(FtpConstant.POOL_SOFT_MIN_EVICTABLE_IDLE_TIMEMILLIS);
+        poolConfig.setSoftMinEvictableIdleTimeMillis(FtpConstant.POOL_MIN_EVICTABLE_IDLE_TIMEMILLIS);
         poolConfig.setLifo(FtpConstant.POOL_LIFO);
 		pool = new GenericObjectPool<FTPClient>(clientFactory, poolConfig);
 		
