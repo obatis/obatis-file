@@ -1,5 +1,9 @@
 package com.sbatis.upload.ftp;
 
+/**
+ * 矩阵目录信息存储缓存类
+ * @author HuangLongPu
+ */
 public class UploadPathTempData {
 
 	/**

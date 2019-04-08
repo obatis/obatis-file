@@ -47,6 +47,7 @@ public class FileUploadFactory implements Serializable {
 
 	/**
 	 * 判断目录索引，通过递归方式，得到当前的矩阵存储目录
+	 * @author HuangLongPu
 	 * @param pathSecondX
 	 * @param pathSecondY
 	 * @param pathThirdX
@@ -105,6 +106,31 @@ public class FileUploadFactory implements Serializable {
 	}
 
 	/**
+	 * 删除文件,提供文件名包括后缀
+	 * @author HuangLongPu
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean deleteFile(String filePath) {
+		boolean success = false;
+		FTPClient ftpClient = null;
+		try {
+			ftpClient = FtpPool.borrowObject();
+			ftpClient.deleteFile(filePath);
+			success = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				FtpPool.returnObject(ftpClient, 0);
+			} catch (Exception ioe) {
+				ioe.printStackTrace();
+			}
+		}
+		return success;
+	}
+
+	/**
 	 * 传入File 进行文件上传
 	 * @author HuangLongPu
 	 * @param file
@@ -147,7 +173,6 @@ public class FileUploadFactory implements Serializable {
 	 * @param data
 	 * @param fileName
 	 * @param typeName
-	 * @author HuangLongPu
 	 * @return
 	 * @throws FileNotFoundException
 	 */
@@ -304,32 +329,6 @@ public class FileUploadFactory implements Serializable {
 			}
 		}
 		return filePath;
-	}
-
-
-	/**
-	 * 删除文件,提供文件名包括后缀
-	 * @author HuangLongPu
-	 * @param filePath
-	 * @return
-	 */
-	public static boolean deleteFile(String filePath) {
-		boolean success = false;
-		FTPClient ftpClient = null;
-		try {
-			ftpClient = FtpPool.borrowObject();
-			ftpClient.deleteFile(filePath);
-			success = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				FtpPool.returnObject(ftpClient, 0);
-			} catch (Exception ioe) {
-				ioe.printStackTrace();
-			}
-		}
-		return success;
 	}
 
 	/**

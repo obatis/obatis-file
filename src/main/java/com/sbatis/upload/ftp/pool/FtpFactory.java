@@ -9,6 +9,10 @@ import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
+/**
+ * FTP连接池工厂类，负责维护连接池
+ * @author HuangLongPu
+ */
 public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
 
 	private FtpConfig ftpConfig;
@@ -22,6 +26,7 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
 
 	/**
 	 * 创建ftp 连接
+	 * @author HuangLongPu
 	 * @return
 	 * @throws Exception
 	 */

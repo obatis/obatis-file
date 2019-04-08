@@ -9,6 +9,10 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
+/**
+ * FTP连接池管理类
+ * @author HuangLongPu
+ */
 public class FtpPool {
 
 	private static FtpPool ftpPool;
@@ -20,6 +24,7 @@ public class FtpPool {
 
 	/**
 	 * 初始化ftp连接 表示连接超时为默认10000毫秒 表示连接模式为被动模式
+	 * @author HuangLongPu
 	 * @param pathName
 	 * @param ftpHost
 	 * @param ftpPort
@@ -33,6 +38,7 @@ public class FtpPool {
 
 	/**
 	 * 初始化ftp连接 自定义超时时间 表示连接模式为被动模式
+	 * @author HuangLongPu
 	 * @param pathName
 	 * @param ftpHost
 	 * @param ftpPort
@@ -47,6 +53,7 @@ public class FtpPool {
 
 	/**
 	 * 初始化ftp连接 自定义超时时间 自定义选择连接模式，被动为true，主动为false
+	 * @author HuangLongPu
 	 * @param pathName
 	 * @param ftpHost
 	 * @param ftpPort
@@ -136,11 +143,13 @@ public class FtpPool {
 
 	/**
 	 * 基于pool2的连接池对象
+	 * @author HuangLongPu
 	 */
 	private static GenericObjectPool<FTPClient> pool;
 
 	/**
 	 * 传入 FTPClientFactory 对象，基于pool2，配置ftp连接池
+	 * @author HuangLongPu
 	 * @param clientFactory
 	 * @throws Exception 
 	 */
@@ -162,6 +171,7 @@ public class FtpPool {
 
 	/**
 	 * 获取一个新的ftp连接
+	 * @author HuangLongPu
 	 * @return
 	 * @throws Exception
 	 */
@@ -171,6 +181,7 @@ public class FtpPool {
 	
 	/**
 	 * 获取一个新的连接，如果失败，设置重试机制，设置为3次
+	 * @author HuangLongPu
 	 * @param retry
 	 * @return
 	 * @throws Exception
@@ -191,6 +202,7 @@ public class FtpPool {
 
 	/**
 	 * 将ftp连接归还给连接池，同时将ftp目录重置到顶级目录，根据level设置向上返回次数
+	 * @author HuangLongPu
 	 * @param ftpClient
 	 * @param level
 	 * @throws IOException
@@ -206,6 +218,7 @@ public class FtpPool {
 
 	/**
 	 * 关闭ftp连接池
+	 * @author HuangLongPu
 	 */
 	public void closeObject() {
 		if(pool != null) {
