@@ -5,6 +5,7 @@
     <groupId>com.obatis</groupId>
     <artifactId>obatis-upload</artifactId>
     <version>1.0</version>
+    <packaging>jar</packaging>
     <name>obatis-upload</name>
 
     <properties>
