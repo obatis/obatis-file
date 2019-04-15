@@ -1,9 +1,9 @@
-package com.sbatis.upload.ftp;
+package com.obatis.upload.ftp;
 
-import com.sbatis.convert.date.DateCommonConvert;
-import com.sbatis.upload.ftp.config.FtpConstant;
-import com.sbatis.upload.ftp.pool.FtpPool;
-import com.sbatis.validate.ValidateTool;
+import com.obatis.upload.ftp.config.FtpConstant;
+import com.obatis.upload.ftp.pool.FtpPool;
+import com.obatis.convert.date.DateCommonConvert;
+import com.obatis.validate.ValidateTool;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;

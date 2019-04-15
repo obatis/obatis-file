@@ -1,6 +1,6 @@
-package com.sbatis.upload.ftp.config;
+package com.obatis.upload.ftp.config;
 
-import com.sbatis.constant.NormalCommonConstant;
+import com.obatis.constant.NormalCommonConstant;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 

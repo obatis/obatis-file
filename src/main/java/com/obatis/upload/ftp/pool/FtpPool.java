@@ -1,10 +1,10 @@
-package com.sbatis.upload.ftp.pool;
+package com.obatis.upload.ftp.pool;
 
 import java.io.IOException;
 
-import com.sbatis.upload.ftp.config.FtpConfig;
-import com.sbatis.upload.ftp.config.FtpConstant;
-import com.sbatis.validate.ValidateTool;
+import com.obatis.upload.ftp.config.FtpConfig;
+import com.obatis.upload.ftp.config.FtpConstant;
+import com.obatis.validate.ValidateTool;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;

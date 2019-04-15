@@ -1,4 +1,4 @@
-package com.sbatis.upload.ftp;
+package com.obatis.upload.ftp;
 
 /**
  * 矩阵目录信息存储缓存类
