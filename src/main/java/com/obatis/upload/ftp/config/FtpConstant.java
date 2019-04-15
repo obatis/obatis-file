@@ -51,7 +51,7 @@ public class FtpConstant {
 	 */
 	public static final int POOL_MAX_WAIT = 30000;
 	/**
-	 * 池对象耗尽之后是否阻塞,maxWait<0时一直等待
+	 * 池对象耗尽之后是否阻塞,maxWait小于0时一直等待
 	 */
 	public static final boolean POOL_BLOCK_WHENEXHAUSTED = true;
 	/**

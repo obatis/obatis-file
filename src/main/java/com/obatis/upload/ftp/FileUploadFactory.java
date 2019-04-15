@@ -98,8 +98,8 @@ public class FileUploadFactory implements Serializable {
 	/**
 	 * 根据ftp服务器的文件路径删除文件
 	 * @author HuangLongPu
- 	 * @param filePath
-	 * @return
+ 	 * @param filePath    传入文件ftp所在路径
+	 * @return  true表示删除成功，false表示删除失败
 	 */
 	public static boolean delete(String filePath) {
 		return deleteFile(filePath);
@@ -108,7 +108,7 @@ public class FileUploadFactory implements Serializable {
 	/**
 	 * 删除文件,提供文件名包括后缀
 	 * @author HuangLongPu
-	 * @param filePath
+	 * @param filePath  文件ftp所在路径
 	 * @return
 	 */
 	public static boolean deleteFile(String filePath) {
@@ -133,7 +133,7 @@ public class FileUploadFactory implements Serializable {
 	/**
 	 * 传入File 进行文件上传
 	 * @author HuangLongPu
-	 * @param file
+	 * @param file file文件
 	 * @return
 	 * @throws FileNotFoundException
 	 */
@@ -144,8 +144,8 @@ public class FileUploadFactory implements Serializable {
 	/**
 	 * 传入File 进行文件上传，同时规定文件类型
 	 * @author HuangLongPu
-	 * @param file
-	 * @param typeName
+	 * @param file         file wenj
+	 * @param typeName     文件类型名称
 	 * @return
 	 * @throws FileNotFoundException
 	 */
@@ -156,8 +156,8 @@ public class FileUploadFactory implements Serializable {
 	/**
 	 * 传入字节数组进行文件上传，同时传入文件名或者文件后缀
 	 * @author HuangLongPu
-	 * @param data
-	 * @param fileName
+	 * @param data       字节数组文件
+	 * @param fileName   文件后缀名称
 	 * @return
 	 * @throws FileNotFoundException
 	 */
