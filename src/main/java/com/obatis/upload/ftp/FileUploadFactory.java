@@ -150,7 +150,7 @@ public class FileUploadFactory implements Serializable {
 	 * @throws FileNotFoundException
 	 */
 	public static String upload(File file, String typeName) throws FileNotFoundException {
-		return upload(new FileInputStream(file), file.getName().substring(file.getName().lastIndexOf(".")), typeName);
+		return upload(new FileInputStream(file), file.getName(), typeName);
 	}
 
 	/**
@@ -162,7 +162,6 @@ public class FileUploadFactory implements Serializable {
 	 * @throws FileNotFoundException
 	 */
 	public static String upload(byte[] data, String fileName) {
-		fileName = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 		return upload(inputStream, fileName, null);
 	}
@@ -177,9 +176,8 @@ public class FileUploadFactory implements Serializable {
 	 * @throws FileNotFoundException
 	 */
 	public static String upload(byte[] data, String fileName, String typeName) {
-		String fileSuffix = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-		return upload(inputStream, fileSuffix, typeName);
+		return upload(inputStream, fileName, typeName);
 	}
 
 	/**
@@ -190,8 +188,7 @@ public class FileUploadFactory implements Serializable {
 	 * @return
 	 */
 	public static String upload(InputStream inputStream, String fileName) {
-		String fileSuffix = fileName.indexOf(".") == -1 ? fileName : fileName.substring(fileName.lastIndexOf("."));
-		return upload(inputStream, fileSuffix, null);
+		return upload(inputStream, fileName, null);
 	}
 
 	/**
@@ -227,7 +224,10 @@ public class FileUploadFactory implements Serializable {
 			topPath = FtpConstant.UPLOAD_TOP_PATH + "/" + typeName;
 		}
 
-		UploadPathTempData uploadPathTempData = uploadPathTempDataMap.get(topPath);// 获取Map中的对象
+		/**
+		 * 获取Map中的对象
+		 */
+		UploadPathTempData uploadPathTempData = uploadPathTempDataMap.get(topPath);
 		if (uploadPathTempData == null) {
 			uploadPathTempData = new UploadPathTempData();
 		}
@@ -251,8 +251,8 @@ public class FileUploadFactory implements Serializable {
 			if(ftpClient == null) {
 				return null;
 			}
-			
-			fileSuffix = (fileSuffix.indexOf(".") == -1 ? fileSuffix : fileSuffix.replace(".", "")).toLowerCase();
+
+			fileSuffix = fileSuffix.indexOf(".") == -1 ? fileSuffix : fileSuffix.substring(fileSuffix.lastIndexOf(".")).replace(".", "").toLowerCase();
 			String uploadFileName = getUploadFileName(fileSuffix);
 			// 获取文件上传矩阵目录
 			getUploadPath(uploadPathTempData);

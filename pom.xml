@@ -4,7 +4,7 @@
 
     <groupId>com.obatis</groupId>
     <artifactId>obatis-upload</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
     <name>obatis-upload</name>
     <description>obatis-upload, file upload</description>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>com.obatis</groupId>
             <artifactId>obatis-tools</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.7</version>
         </dependency>
         <dependency>
             <groupId>commons-net</groupId>
