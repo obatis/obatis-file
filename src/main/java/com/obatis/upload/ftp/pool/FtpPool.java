@@ -37,6 +37,20 @@ public class FtpPool {
 	}
 
 	/**
+	 * 初始化ftp连接 表示连接超时为默认10000毫秒
+	 * @author HuangLongPu
+	 * @param pathName
+	 * @param ftpHost
+	 * @param ftpPort
+	 * @param ftpUsername
+	 * @param ftpPassword
+	 * @throws Exception
+	 */
+	public static void initConfig(String pathName, String ftpHost, int ftpPort, String ftpUsername, String ftpPassword, boolean ftpPassiveMode) throws Exception {
+		initConfig(pathName, ftpHost, ftpPort, ftpUsername, ftpPassword, FtpConstant.TIME_OUT, ftpPassiveMode);
+	}
+
+	/**
 	 * 初始化ftp连接 自定义超时时间 表示连接模式为被动模式
 	 * @author HuangLongPu
 	 * @param pathName
