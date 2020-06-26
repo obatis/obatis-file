@@ -1,6 +1,6 @@
 package com.obatis.upload.ftp.config;
 
-import com.obatis.constant.NormalCommonConstant;
+import com.obatis.constant.CharsetConstant;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
@@ -16,7 +16,7 @@ public class FtpConfig extends GenericObjectPoolConfig<FTPClient> {
 	private String ftpPassword;// ftp密码
 
 	private int connectTimeOut = FtpConstant.TIME_OUT;// 默认ftp连接超时时间 毫秒
-	private String controlEncoding = NormalCommonConstant.CHARSET_UTF8; // 设置编码
+	private String controlEncoding = CharsetConstant.CHARSET_UTF8; // 设置编码
 	private int retryTimes = FtpConstant.UPLOAD_RETRY_TIMES_DEFAULT; // 重试次数
 	private int bufferSize = 1024 * 1024;// 缓冲区大小
 	private int fileType = 2;// 1:传输数据格式 2:binary二进制数据
