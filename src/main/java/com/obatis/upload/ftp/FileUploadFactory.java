@@ -215,7 +215,7 @@ public class FileUploadFactory implements Serializable {
 	private static String upload(InputStream inputStream, String fileSuffix, String typeName, int retryTimes) {
 
 		// 获取当前年月 "yyyyMM" 格式的字符串
-		String curYearMonth = DateCommonConvert.formatCurYearMonth();
+		String curYearMonth = DateCommonConvert.formatYearMonth();
 		String topPath = null;
 		if (ValidateTool.isEmpty(typeName)) {
 			topPath = FtpConstant.UPLOAD_TOP_PATH;
@@ -338,6 +338,6 @@ public class FileUploadFactory implements Serializable {
 	 * @return
 	 */
 	private static String getUploadFileName(String fileSuffix) {
-		return DateCommonConvert.formatCurDateTimeMillis() + "_" + UUID.randomUUID().toString().replace("-", "01") + "." + fileSuffix;
+		return DateCommonConvert.formatDateTimeMillis() + "_" + UUID.randomUUID().toString().replace("-", "01") + "." + fileSuffix;
 	}
 }
