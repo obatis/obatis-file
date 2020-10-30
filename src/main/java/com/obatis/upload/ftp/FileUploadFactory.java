@@ -1,18 +1,18 @@
 package com.obatis.upload.ftp;
 
+import com.obatis.convert.date.DateCommonConvert;
+import com.obatis.generator.NumberGenerator;
 import com.obatis.tools.ValidateTool;
 import com.obatis.upload.ftp.config.FtpConstant;
 import com.obatis.upload.ftp.pool.FtpPool;
-import com.obatis.convert.date.DateCommonConvert;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
- * ftp模块文件上传组件服务
+ * ftp 模块文件上传组件服务
  * @author HuangLongPu
  */
 public class FileUploadFactory implements Serializable {
@@ -338,6 +338,6 @@ public class FileUploadFactory implements Serializable {
 	 * @return
 	 */
 	private static String getUploadFileName(String fileSuffix) {
-		return DateCommonConvert.formatDateTimeMillis() + "_" + UUID.randomUUID().toString().replace("-", "01") + "." + fileSuffix;
+		return NumberGenerator.getNumber() + "." + fileSuffix;
 	}
 }
