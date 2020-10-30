@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.obatis</groupId>
-    <artifactId>obatis-upload</artifactId>
-    <version>1.0.4</version>
+    <artifactId>obatis-file</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
-    <name>obatis-upload</name>
-    <description>obatis-upload, file upload</description>
-    <url>https://github.com/obatis/obatis-upload</url>
+    <name>obatis-file</name>
+    <description>obatis-file file upload</description>
+    <url>https://github.com/obatis/obatis-file</url>
 
     <distributionManagement>
         <repository>
@@ -25,8 +25,8 @@
     </properties>
 
     <scm>
-        <url>https://github.com/obatis/obatis-upload</url>
-        <connection>scm:git:https://github.com/obatis/obatis-upload.git</connection>
+        <url>https://github.com/obatis/obatis-file</url>
+        <connection>scm:git:https://github.com/obatis/obatis-file.git</connection>
     </scm>
 
     <organization>

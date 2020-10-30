@@ -1,4 +1,4 @@
-package com.obatis.upload.ftp.config;
+package com.obatis.file.upload.ftp.config;
 
 /**
  * ftp常量类

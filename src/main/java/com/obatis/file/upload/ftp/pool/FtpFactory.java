@@ -1,8 +1,8 @@
-package com.obatis.upload.ftp.pool;
+package com.obatis.file.upload.ftp.pool;
 
 import java.io.IOException;
 
-import com.obatis.upload.ftp.config.FtpConfig;
+import com.obatis.file.upload.ftp.config.FtpConfig;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.pool2.BasePooledObjectFactory;

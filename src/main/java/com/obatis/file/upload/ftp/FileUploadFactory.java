@@ -1,10 +1,10 @@
-package com.obatis.upload.ftp;
+package com.obatis.file.upload.ftp;
 
 import com.obatis.convert.date.DateCommonConvert;
 import com.obatis.generator.NumberGenerator;
 import com.obatis.tools.ValidateTool;
-import com.obatis.upload.ftp.config.FtpConstant;
-import com.obatis.upload.ftp.pool.FtpPool;
+import com.obatis.file.upload.ftp.config.FtpConstant;
+import com.obatis.file.upload.ftp.pool.FtpPool;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.*;
