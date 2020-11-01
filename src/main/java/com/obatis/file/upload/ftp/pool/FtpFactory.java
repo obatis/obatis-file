@@ -20,6 +20,7 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
 	public FtpConfig getFtpConfig() {
 		return ftpConfig;
 	}
+
 	public void setFtpConfig(FtpConfig ftpConfig) {
 		this.ftpConfig = ftpConfig;
 	}
