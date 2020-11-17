@@ -1,6 +1,6 @@
 package com.obatis.file.upload.ftp;
 
-import com.obatis.convert.date.DateCommonConvert;
+import com.obatis.convert.date.DateConvert;
 import com.obatis.generator.NumberGenerator;
 import com.obatis.tools.ValidateTool;
 import com.obatis.file.upload.ftp.config.FtpConstant;
@@ -215,8 +215,8 @@ public class FileUploadFactory implements Serializable {
 	private static String upload(InputStream inputStream, String fileSuffix, String typeName, int retryTimes) {
 
 		// 获取当前年月 "yyyyMM" 格式的字符串
-		String curYearMonth = DateCommonConvert.formatYearMonth();
-		String topPath = null;
+		String curYearMonth = DateConvert.formatYearMonth();
+		String topPath;
 		if (ValidateTool.isEmpty(typeName)) {
 			topPath = FtpConstant.UPLOAD_TOP_PATH;
 		} else {
